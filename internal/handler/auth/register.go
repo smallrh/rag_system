@@ -17,10 +17,8 @@ func Register(c *echo.Context) error {
 			"invalid request body",
 		)
 	}
-	success, err := auth.VerifyCode(data.VerifyCodeRequest)
-	if err != nil {
-		return err
-	}
+	success := auth.VerifyCode(data.VerifyCodeRequest)
+
 	if success {
 		auth.Register(data.RegisterRequest)
 	}

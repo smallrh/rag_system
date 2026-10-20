@@ -10,4 +10,6 @@ func RegisterAuthRouter(e *echo.Echo) {
 	g := e.Group("/auth")
 	g.POST("/login", handlerAuth.Login)
 	g.POST("/register", handlerAuth.Register)
+	g.GET("/captcha", handlerAuth.GetCaptcha)
+	g.POST("/verify_captcha", handlerAuth.VerifyCode)
 }
