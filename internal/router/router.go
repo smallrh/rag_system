@@ -1,9 +1,13 @@
 package router
 
-import "github.com/labstack/echo/v5"
+import (
+	handlerAuth "go_study/internal/handler/auth"
 
-func RegisterRouters(e *echo.Echo) {
-	RegisterAuthRouter(e)
+	"github.com/labstack/echo/v5"
+)
+
+func RegisterRouters(e *echo.Echo, h *handlerAuth.AuthHandler) {
+	RegisterAuthRouter(e, h)
 	// RegisterUserRouter(e)
 	// RegisterOrderRouter(e)
 }

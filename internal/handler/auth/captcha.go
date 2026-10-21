@@ -4,12 +4,13 @@ import (
 	"go_study/internal/utils"
 	"net/http"
 
-	"github.com/labstack/echo/v5"
 	captchaService "go_study/internal/services/auth"
+
+	"github.com/labstack/echo/v5"
 )
 
-func GetCaptcha(c *echo.Context) error {
-	data, captchaID, err := captchaService.GetCaptcha()
+func (h *AuthHandler) GetCaptcha(c *echo.Context) error {
+	data, captchaID, err := h.service.GetCaptcha()
 	if err != nil {
 		return echo.NewHTTPError(
 			http.StatusInternalServerError,
@@ -23,9 +24,9 @@ func GetCaptcha(c *echo.Context) error {
 	})
 }
 
-func VerifyCode(c *echo.Context) error {
-	req, _ := utils.Convert[captchaService.VerifyCodeRequest](c.Request().Body)
-	data := captchaService.VerifyCode(req)
+func (h *AuthHandler) VerifyCaptcha(c *echo.Context) error {
+	req, _ := utils.Convert[captchaService.VerifyCaptchaRequest](c.Request().Body)
+	data := h.service.VerifyCode(req)
 	return c.JSON(http.StatusOK, map[string]any{
 		"captcha_id": req.CaptchaId,
 		"success":    data,

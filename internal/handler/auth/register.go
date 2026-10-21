@@ -2,14 +2,13 @@ package auth
 
 import (
 	"go_study/internal/handler/meta"
-	"go_study/internal/services/auth"
 	"go_study/internal/utils"
 	"net/http"
 
 	"github.com/labstack/echo/v5"
 )
 
-func Register(c *echo.Context) error {
+func (h *AuthHandler) Register(c *echo.Context) error {
 	data, err := utils.Convert[meta.RegisterRequestMeta](c.Request().Body)
 	if err != nil {
 		return echo.NewHTTPError(
@@ -17,10 +16,13 @@ func Register(c *echo.Context) error {
 			"invalid request body",
 		)
 	}
-	success := auth.VerifyCode(data.VerifyCodeRequest)
+	success := h.service.VerifyCode(data.VerifyCodeRequest)
 
 	if success {
-		auth.Register(data.RegisterRequest)
+		err := h.service.Register(c.Request().Context(), data.RegisterRequest)
+		if err != nil {
+			return err
+		}
 	}
 	if !success {
 		return echo.NewHTTPError(
@@ -28,6 +30,5 @@ func Register(c *echo.Context) error {
 			"invalid verification code",
 		)
 	}
-
 	return nil
 }

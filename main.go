@@ -1,25 +1,49 @@
 package main
 
 import (
+	"go_study/internal/config"
+	"go_study/internal/db"
+	handlerAuth "go_study/internal/handler/auth"
+	repositoryAuth "go_study/internal/repository/auth"
 	"go_study/internal/router"
+	serviceAuth "go_study/internal/services/auth"
 	"log/slog"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 )
 
 func main() {
-	// Echo instance
+	cfg, err := config.Load()
+	if err != nil {
+		slog.Error("failed to load config", "error", err)
+		return
+	}
+
+	database, err := db.NewPostgres(cfg.Database.URL)
+	if err != nil {
+		slog.Error("failed to connect database", "error", err)
+		return
+	}
+	defer func(database *sqlx.DB) {
+		err := database.Close()
+		if err != nil {
+
+		}
+	}(database)
+
+	users := repositoryAuth.NewUserRepository(database)
+	authService := serviceAuth.NewAuthService(users)
+	authHandler := handlerAuth.NewAuthHandler(authService)
+
 	e := echo.New()
 
-	// Middleware
-	e.Use(middleware.RequestLogger()) // log requests with log/slog
-	e.Use(middleware.Recover())       // recover from panics and return an error
+	e.Use(middleware.RequestLogger())
+	e.Use(middleware.Recover())
 
-	// Routes
-	router.RegisterRouters(e)
+	router.RegisterRouters(e, authHandler)
 
-	// Start server
 	if err := e.Start(":8080"); err != nil {
 		slog.Error("failed to start server", "error", err)
 	}

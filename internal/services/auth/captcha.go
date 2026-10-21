@@ -3,10 +3,11 @@ package auth
 import (
 	"bytes"
 	"encoding/base64"
+
 	"github.com/dchest/captcha"
 )
 
-func GetCaptcha() (string, string, error) {
+func (s *AuthService) GetCaptcha() (string, string, error) {
 	id := captcha.New()
 	var buf bytes.Buffer
 	if err := captcha.WriteImage(&buf, id, 240, 80); err != nil {
@@ -17,12 +18,12 @@ func GetCaptcha() (string, string, error) {
 	return "data:image/png;base64," + image, id, nil
 }
 
-type VerifyCodeRequest struct {
-	CaptchaId string `json:"captcha_id"`
-	Code      string `json:"code"`
+type VerifyCaptchaRequest struct {
+	CaptchaId   string `json:"captcha_id"`
+	CaptchaCode string `json:"Captcha_code"`
 }
 
-func VerifyCode(req VerifyCodeRequest) bool {
-	data := captcha.VerifyString(req.CaptchaId, req.Code)
+func (s *AuthService) VerifyCode(req VerifyCaptchaRequest) bool {
+	data := captcha.VerifyString(req.CaptchaId, req.CaptchaCode)
 	return data
 }
