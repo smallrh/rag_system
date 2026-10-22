@@ -19,12 +19,11 @@ func NewUserRepository(db *sqlx.DB) *UserRepository {
 
 func (r *UserRepository) Create(
 	ctx context.Context,
-	tx *sqlx.Tx,
 	displayName string,
 ) (*authModel.User, error) {
 	var user authModel.User
 
-	err := tx.GetContext(ctx, &user, `
+	err := r.db.GetContext(ctx, &user, `
         INSERT INTO users (display_name)
         VALUES (NULLIF($1, ''))
         RETURNING
@@ -61,12 +60,11 @@ func (r *UserRepository) GetByID(
 
 func (r *UserRepository) GetActiveByID(
 	ctx context.Context,
-	tx *sqlx.Tx,
 	id uuid.UUID,
 ) (*authModel.User, error) {
 	var user authModel.User
 
-	err := tx.GetContext(ctx, &user, `
+	err := r.db.GetContext(ctx, &user, `
         SELECT
             id, display_name, status,
             created_at, updated_at, deleted_at

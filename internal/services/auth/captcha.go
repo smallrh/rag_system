@@ -18,12 +18,12 @@ func (s *AuthService) GetCaptcha() (string, string, error) {
 	return "data:image/png;base64," + image, id, nil
 }
 
-type VerifyCaptchaRequest struct {
+type VerifyCodeRequest struct {
 	CaptchaId   string `json:"captcha_id"`
 	CaptchaCode string `json:"Captcha_code"`
 }
 
-func (s *AuthService) VerifyCode(req VerifyCaptchaRequest) bool {
+func (s *AuthService) VerifyCode(req VerifyCodeRequest) bool {
 	data := captcha.VerifyString(req.CaptchaId, req.CaptchaCode)
 	return data
 }

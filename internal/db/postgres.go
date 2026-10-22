@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 func NewPostgres(dsn string) (*sqlx.DB, error) {
@@ -20,6 +22,5 @@ func NewPostgres(dsn string) (*sqlx.DB, error) {
 	database.SetMaxOpenConns(20)
 	database.SetMaxIdleConns(5)
 	database.SetConnMaxLifetime(30 * time.Minute)
-
 	return database, nil
 }

@@ -25,7 +25,7 @@ func (h *AuthHandler) GetCaptcha(c *echo.Context) error {
 }
 
 func (h *AuthHandler) VerifyCaptcha(c *echo.Context) error {
-	req, _ := utils.Convert[captchaService.VerifyCaptchaRequest](c.Request().Body)
+	req, _ := utils.Convert[captchaService.VerifyCodeRequest](c.Request().Body)
 	data := h.service.VerifyCode(req)
 	return c.JSON(http.StatusOK, map[string]any{
 		"captcha_id": req.CaptchaId,

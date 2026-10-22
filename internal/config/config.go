@@ -9,9 +9,10 @@ import (
 )
 
 type Config struct {
-	Database DatabaseConfig
-	Redis    RedisConfig
-	MinIO    MinIOConfig
+	Database  DatabaseConfig
+	Redis     RedisConfig
+	MinIO     MinIOConfig
+	JWTSecret string
 }
 
 type DatabaseConfig struct {
@@ -53,6 +54,7 @@ func Load() (*Config, error) {
 			Bucket:    getEnv("MINIO_BUCKET", "auth-files"),
 			UseSSL:    getEnvBool("MINIO_USE_SSL", false),
 		},
+		JWTSecret: getEnv("JWT_SECRET", ""),
 	}
 
 	if err := cfg.Validate(); err != nil {
@@ -86,6 +88,10 @@ func (c *Config) Validate() error {
 
 	if c.Redis.DB < 0 {
 		return fmt.Errorf("REDIS_DB 不能小于 0")
+	}
+
+	if c.JWTSecret == "" {
+		return fmt.Errorf("JWT_SECRET 未配置")
 	}
 
 	return nil

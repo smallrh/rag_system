@@ -33,8 +33,8 @@ func main() {
 		}
 	}(database)
 
-	users := repositoryAuth.NewUserRepository(database)
-	authService := serviceAuth.NewAuthService(users)
+	users := repositoryAuth.NewRepository(database)
+	authService := serviceAuth.NewAuthService(users, []byte(cfg.JWTSecret))
 	authHandler := handlerAuth.NewAuthHandler(authService)
 
 	e := echo.New()
